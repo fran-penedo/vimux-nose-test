@@ -2,12 +2,12 @@
 command! RunAllNoseTests :call RunNoseTestBuffer()
 command! RunFocusedNoseTests :call RunNoseTestFocused()
 
-command! RunNoseTest :call _run_nosetests("")
+command! RunNoseTest :call _run_nosetests("", "", "")
 command! RunNoseTestBuffer :call RunNoseTestBuffer()
 command! RunNoseTestFocused :call RunNoseTestFocused()
 
 function! RunNoseTestBuffer()
-  call _run_nosetests(expand("%"))
+  call _run_nosetests(expand("%"), "", "")
 endfunction
 
 function! RunNoseTestFocused()
@@ -19,7 +19,7 @@ function! RunNoseTestFocused()
     return
   endif
 
-  call _run_nosetests(expand("%") . ":" . test_class . "." . test_name)
+  call _run_nosetests(expand("%") . ":" . test_class . "." . test_name, "FOCUSED=1 ", "-s --nologcapture ")
 endfunction
 
 function! _nose_test_search(fragment)
@@ -32,8 +32,8 @@ function! _nose_test_search(fragment)
   endif
 endfunction
 
-function! _run_nosetests(test)
-  call VimuxRunCommand(_virtualenv() . "nosetests " . a:test)
+function! _run_nosetests(test, env, flags)
+  call VimuxRunCommand(_virtualenv() . a:env . "nosetests " . a:flags . a:test)
 endfunction
 
 function! _virtualenv()
